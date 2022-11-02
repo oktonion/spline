@@ -87,7 +87,7 @@ protected:
 public:
     // default constructor: set boundary condition to be zero curvature
     // at both ends, i.e. natural splines
-    spline(): m_type(cspline),
+    spline(): m_c0(0.0), m_type(cspline),
         m_left(second_deriv), m_right(second_deriv),
         m_left_value(0.0), m_right_value(0.0), m_made_monotonic(false)
     {
@@ -691,7 +691,7 @@ void band_matrix::lu_decompose()
     // preconditioning
     // normalize column i so that a_ii=1
     for(int i=0; i<this->dim(); i++) {
-        assert(this->operator()(i,i)!=0.0);
+        assert(const_cast<const band_matrix*>(this)->operator()(i,i)!=0.0);
         this->saved_diag(i)=1.0/this->operator()(i,i);
         j_min=std::max(0,i-this->num_lower());
         j_max=std::min(this->dim()-1,i+this->num_upper());
@@ -705,7 +705,7 @@ void band_matrix::lu_decompose()
     for(int k=0; k<this->dim(); k++) {
         i_max=std::min(this->dim()-1,k+this->num_lower());  // num_lower not a mistake!
         for(int i=k+1; i<=i_max; i++) {
-            assert(this->operator()(k,k)!=0.0);
+            assert(const_cast<const band_matrix*>(this)->operator()(k,k)!=0.0);
             x=-this->operator()(i,k)/this->operator()(k,k);
             this->operator()(i,k)=-x;                         // assembly part of L
             j_max=std::min(this->dim()-1,k+this->num_upper());
